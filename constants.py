@@ -17,7 +17,7 @@ core_radius = 10000
 # core radius in light years -- actual core is 1/10th the size (1000 ly) the rest is a transitional ramp
 
 galaxy_height = 1000
-# core height in light years
+# core height in light years (not used yet)
 
 xoff = int(map_size/2)
 # half the display size in pixels
@@ -26,8 +26,10 @@ yoff = int(map_size/2)
 # half the display size in pixels
 
 mmxoff = 1010
+#mini map x offset
 
 mmyoff = 10
+#mini map y offset
 
 # colors
 black = (0, 0, 0)
