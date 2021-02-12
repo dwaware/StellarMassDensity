@@ -36,6 +36,7 @@ for x in range(0, constants.map_size):
     for y in range(0, constants.map_size):
 
         #formulate the actual density values inside the x and y loop:
+        #convert from a zero-based starting point (our screen) to a zero = map center reference frame
         mapX = x*constants.map_scale+constants.map_scale/2
         mapY = y*constants.map_scale+constants.map_scale/2
 
@@ -181,20 +182,22 @@ while not closed:
 
             #if so, bump up the density
             if posDFC < halfCoreMapRad:
-                finDen = 10000 * (1 - pow(posDFC/halfCoreMapRad,2)) - decDen
+                finDen = 5000 * (1 - pow(posDFC/halfCoreMapRad,2)) - decDen
+                if (finDen < 0): finDen = 90 + 20 * random.random()
 
             #half the size again, and if we are within that even smaller distance, bump up density even more
             if posDFC < halfCoreMapRad/2:
-                finDen = 60000 * (1 - pow(posDFC/(halfCoreMapRad/2),2)) - decDen
+                finDen = 25000 * (1 - pow(posDFC/(halfCoreMapRad/2),2)) - decDen
+                if (finDen < 0): finDen = 90 + 20 * random.random()
 
             #provide some textual data on screen relating to density
-            finDen = round(finDen,2)
-            dlabel = font.render('Density:  '+str(finDen)+"                   ", True, constants.black, constants.background)
+            scaledFinDen = int(80*finDen)
+            dlabel = font.render('Density:  '+str(scaledFinDen)+"                   ", True, constants.black, constants.background)
             screen.blit(dlabel, (constants.mmxoff, mps+40))
 
             dlabel = font.render("units:", True, constants.black, constants.background)
             screen.blit(dlabel, (constants.mmxoff, mps + 80))
-            dlabel = font.render("1000s of stars", True, constants.black, constants.background)
+            dlabel = font.render("stars", True, constants.black, constants.background)
             screen.blit(dlabel, (constants.mmxoff, mps + 120))
             dlabel = font.render("----------", True, constants.black, constants.background)
             screen.blit(dlabel, (constants.mmxoff, mps + 140))
