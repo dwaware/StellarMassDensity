@@ -1,9 +1,11 @@
-import os
 import constants
+import os
 import math
 import random
 import pygame
 import numpy as np
+
+random.seed("seed_here",2)
 
 # create/init the pygame SDL window components
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (630,30)
@@ -13,7 +15,7 @@ pygame.display.set_caption('Stellar Mass Density')
 screen.fill(constants.background)
 
 # create some splash text
-font = pygame.font.SysFont(None, 20)
+font = pygame.font.SysFont(pygame.font.get_default_font(), 20)
 img = font.render('Generating Galaxy', True, constants.black, constants.background)
 screen.blit(img, (20, 20))
 
@@ -29,7 +31,7 @@ maparray = np.zeros((constants.map_size, constants.map_size, 3))
 for x in range(0, constants.map_size):
 
     #while the map data is being generated, stop every so often to add a progress marker to the screen
-    if x % 100 == 0:
+    if x % (constants.map_size//10) == 0:
         screen.blit(img, (x/10+150, 20))
         pygame.display.update()
 
@@ -52,7 +54,7 @@ for x in range(0, constants.map_size):
         aArm = math.atan2(yDFC,xDFC)
 
         #using a decaying exponential curve and a rotating sin and atan component (from above) as well
-        dArm = (pow(math.e,dfc/100000)*0.5*pow(math.sin((pow(0.5*dfc,0.35)-aArm)),2)+0.5-dfc/1000000)
+        dArm = (pow(math.e,dfc/constants.galaxy_size)*0.5*pow(math.sin((pow(0.5*dfc,0.35)-aArm)),2)+0.5-dfc/(100*constants.galaxy_size))
 
         #dampen residual values down to zero as they approach the edge
         dArm = dArm*(1-2*dfc/constants.galaxy_size)
@@ -88,7 +90,8 @@ for x in range(0, constants.map_size):
             maparray[x][y] = (dGreater, dInt, dInt)
 
 #create a rect to blit the map too
-mapRect = pygame.Rect(0,0,constants.map_size,constants.map_size)
+map_offset = (constants.display_height-constants.map_size)//2;
+mapRect = pygame.Rect(map_offset,map_offset,constants.map_size,constants.map_size)
 
 #put the rect on the surface
 mapSurf = screen.subsurface(mapRect)
@@ -181,18 +184,19 @@ while not closed:
             halfCoreMapRad = (constants.core_radius/2)/constants.map_scale
 
             #if so, bump up the density
-            if posDFC < halfCoreMapRad:
-                finDen = 5000 * (1 - pow(posDFC/halfCoreMapRad,2)) - decDen
-                if (finDen < 0): finDen = 90 + 20 * random.random()
+            if posDFC < halfCoreMapRad and maparray[posX][posY][0] > maparray[posX][posY][1]:
+                finDen = 5000 * (1 - pow(posDFC/halfCoreMapRad,2)) + decDen/2
 
             #half the size again, and if we are within that even smaller distance, bump up density even more
             if posDFC < halfCoreMapRad/2:
-                finDen = 25000 * (1 - pow(posDFC/(halfCoreMapRad/2),2)) - decDen
-                if (finDen < 0): finDen = 90 + 20 * random.random()
+                finDen = 25000 * (1 - pow(posDFC/(halfCoreMapRad/2),2)) + decDen/2
 
             #provide some textual data on screen relating to density
             scaledFinDen = int(80*finDen)
             dlabel = font.render('Density:  '+str(scaledFinDen)+"                   ", True, constants.black, constants.background)
+
+            print("x y and density:  "+str(posX)+" "+str(posY)+" "+str(scaledFinDen)+" ")
+
             screen.blit(dlabel, (constants.mmxoff, mps+40))
 
             dlabel = font.render("units:", True, constants.black, constants.background)
