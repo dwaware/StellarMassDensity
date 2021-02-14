@@ -54,7 +54,7 @@ for x in range(0, constants.map_size):
         aArm = math.atan2(yDFC,xDFC)
 
         #using a decaying exponential curve and a rotating sin and atan component (from above) as well
-        dArm = (pow(math.e,dfc/constants.galaxy_size)*0.5*pow(math.sin((pow(0.5*dfc,0.35)-aArm)),2)+0.5-dfc/(100*constants.galaxy_size))
+        dArm = (pow(math.e,dfc/constants.galaxy_size)*0.5*pow(math.sin((pow(0.5*dfc,0.35)-constants.winding_factor*aArm)),2)+0.5-dfc/(100*constants.galaxy_size))
 
         #dampen residual values down to zero as they approach the edge
         dArm = dArm*(1-2*dfc/constants.galaxy_size)
@@ -185,14 +185,14 @@ while not closed:
 
             #if so, bump up the density
             if posDFC < halfCoreMapRad and maparray[posX][posY][0] > maparray[posX][posY][1]:
-                finDen = 5000 * (1 - pow(posDFC/halfCoreMapRad,2)) + decDen/2
+                finDen = constants.density_scale_factor_core_outer * (1 - pow(posDFC/halfCoreMapRad,2)) + decDen/2
 
             #half the size again, and if we are within that even smaller distance, bump up density even more
             if posDFC < halfCoreMapRad/2:
-                finDen = 25000 * (1 - pow(posDFC/(halfCoreMapRad/2),2)) + decDen/2
+                finDen = constants.density_scale_factor_core_inner * (1 - pow(posDFC/(halfCoreMapRad/2),2)) + decDen/2
 
             #provide some textual data on screen relating to density
-            scaledFinDen = int(80*finDen)
+            scaledFinDen = int(constants.density_scale_factor_arms*finDen)
             dlabel = font.render('Density:  '+str(scaledFinDen)+"                   ", True, constants.black, constants.background)
 
             print("x y and density:  "+str(posX)+" "+str(posY)+" "+str(scaledFinDen)+" ")
