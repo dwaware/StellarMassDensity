@@ -2,10 +2,17 @@ import constants
 import os
 import math
 import random
+import time
 import pygame
 import numpy as np
 
-random.seed("seed_here",2)
+if (constants.galaxy_seed == 0) :
+    my_seed = int(1000*time.time())
+    random.seed(my_seed)
+    print("Random seed is: " + str(my_seed))
+else:
+    random.seed(constants.galaxy_seed)
+    print("Predefined seed is: " + str(constants.galaxy_seed))
 
 # create/init the pygame SDL window components
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (630,30)
@@ -43,8 +50,8 @@ for x in range(0, constants.map_size):
         mapY = y*constants.arm_scale+constants.arm_scale/2
 
         #calculate the distance from the center of the map
-        xDFC = mapX - constants.galaxy_size/2
-        yDFC = mapY - constants.galaxy_size/2
+        xDFC = mapX - constants.galaxy_zoom_factor/2
+        yDFC = mapY - constants.galaxy_zoom_factor/2
         dfc = math.sqrt(xDFC * xDFC + yDFC * yDFC)
 
         #assign a decaying density value as distance approaches the edge of the core
@@ -54,10 +61,10 @@ for x in range(0, constants.map_size):
         aArm = math.atan2(yDFC,xDFC)
 
         #using a decaying exponential curve and a rotating sin and atan component (from above) as well
-        dArm = (pow(math.e,dfc/constants.galaxy_size)*0.5*pow(math.sin((pow(0.5*dfc,0.35)-constants.winding_factor*aArm)),2)+0.5-dfc/(100*constants.galaxy_size))
+        dArm = (pow(math.e,dfc/constants.galaxy_zoom_factor)*0.5*pow(math.sin((pow(0.5*dfc,0.35)-constants.winding_factor*aArm)),2)+0.5-dfc/(100*constants.galaxy_zoom_factor))
 
         #dampen residual values down to zero as they approach the edge
-        dArm = dArm*(1-2*dfc/constants.galaxy_size)
+        dArm = dArm*(1-2*dfc/constants.galaxy_zoom_factor)
 
         #get ready to assgin density, with the assumption that if the core is more dense than the arm, we'll use the core value
         density = dCore
@@ -111,7 +118,7 @@ for si in range(0,constants.map_rule_segments//2):
 pygame.draw.rect(screen, pygame.Color(constants.red), pygame.Rect(constants.map_size+50, constants.map_size-50, 100, 1), width=1)
 
 #add legend text
-img = font.render(str(constants.physical_galaxy_size//constants.map_rule_segments)+" light years", True, constants.black, constants.background)
+img = font.render(str(constants.galaxy_size//constants.map_rule_segments)+" light years", True, constants.black, constants.background)
 screen.blit(img, (1050, 970))
 
 #apply updates to the screen
