@@ -39,8 +39,8 @@ for x in range(0, constants.map_size):
 
         #formulate the actual density values inside the x and y loop:
         #convert from a zero-based starting point (our screen) to a zero = map center reference frame
-        mapX = x*constants.map_scale+constants.map_scale/2
-        mapY = y*constants.map_scale+constants.map_scale/2
+        mapX = x*constants.arm_scale+constants.arm_scale/2
+        mapY = y*constants.arm_scale+constants.arm_scale/2
 
         #calculate the distance from the center of the map
         xDFC = mapX - constants.galaxy_size/2
@@ -100,18 +100,18 @@ mapSurf = screen.subsurface(mapRect)
 pygame.surfarray.blit_array(mapSurf, maparray)
 
 #draw some distance rulers on the left side and bottom of the map
-for si in range(0,5):
-    pygame.draw.rect(screen, pygame.Color(constants.red), pygame.Rect(0, 200 * si, 1, 100), width=1)
-    pygame.draw.rect(screen, pygame.Color(constants.red), pygame.Rect(200 * si, 0, 100, 1), width=1)
+for si in range(0,constants.map_rule_segments//2):
+    pygame.draw.rect(screen, pygame.Color(constants.red), pygame.Rect(0, 2*constants.map_rule_size * si, 1, constants.map_rule_size), width=1)
+    pygame.draw.rect(screen, pygame.Color(constants.red), pygame.Rect(2*constants.map_rule_size * si, 0, constants.map_rule_size, 1), width=1)
 
-    pygame.draw.rect(screen, pygame.Color(constants.blue), pygame.Rect(0, 200 * si + 100, 1, 100), width=1)
-    pygame.draw.rect(screen, pygame.Color(constants.blue), pygame.Rect(200 * si + 100, 0, 100, 1), width=1)
+    pygame.draw.rect(screen, pygame.Color(constants.blue), pygame.Rect(0, 2*constants.map_rule_size * si + constants.map_rule_size, 1, constants.map_rule_size), width=1)
+    pygame.draw.rect(screen, pygame.Color(constants.blue), pygame.Rect(2*constants.map_rule_size * si + constants.map_rule_size, 0, constants.map_rule_size, 1), width=1)
 
 #add a distance ruler legand based on galaxy size
-pygame.draw.rect(screen, pygame.Color(constants.red), pygame.Rect(1050, 950, 100, 1), width=1)
+pygame.draw.rect(screen, pygame.Color(constants.red), pygame.Rect(constants.map_size+50, constants.map_size-50, 100, 1), width=1)
 
 #add legend text
-img = font.render(str(constants.galaxy_size//10)+" light years", True, constants.black, constants.background)
+img = font.render(str(constants.physical_galaxy_size//constants.map_rule_segments)+" light years", True, constants.black, constants.background)
 screen.blit(img, (1050, 970))
 
 #apply updates to the screen
@@ -176,12 +176,12 @@ while not closed:
             posDFC = math.sqrt(posXDFC * posXDFC + posYDFC * posYDFC)
 
             #if the distance from the center is within the core radius and our core density value (red) is higher...
-            if posDFC < constants.core_radius/constants.map_scale and maparray[posX][posY][0] > maparray[posX][posY][1]:
+            if posDFC < constants.core_radius/constants.arm_scale and maparray[posX][posY][0] > maparray[posX][posY][1]:
                 #...modify the final density
-                finDen = constants.core_radius/constants.map_scale - posDFC + decDen
+                finDen = constants.core_radius/constants.arm_scale - posDFC + decDen
 
             #now check if we are are within half the radius of the core size, halfCoreMapRad
-            halfCoreMapRad = (constants.core_radius/2)/constants.map_scale
+            halfCoreMapRad = (constants.core_radius/2)/constants.arm_scale
 
             #if so, bump up the density
             if posDFC < halfCoreMapRad and maparray[posX][posY][0] > maparray[posX][posY][1]:
@@ -205,7 +205,7 @@ while not closed:
             screen.blit(dlabel, (constants.mmxoff, mps + 120))
             dlabel = font.render("----------", True, constants.black, constants.background)
             screen.blit(dlabel, (constants.mmxoff, mps + 140))
-            dlabel = font.render("100^3 light year pixel volume", True, constants.black, constants.background)
+            dlabel = font.render(str(constants.physical_galaxy_scale)+"^3 light year pixel volume", True, constants.black, constants.background)
             screen.blit(dlabel, (constants.mmxoff, mps + 160))
 
             #add a higlight to the central pixel of the mini map
