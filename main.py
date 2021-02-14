@@ -1,10 +1,10 @@
 import constants
 import os
-import math
-import random
 import time
 import pygame
-import numpy as np
+import numpy
+import math
+import random
 
 if (constants.galaxy_seed == 0) :
     my_seed = int(1000*time.time())
@@ -34,7 +34,7 @@ img = font.render('%', True, constants.black, constants.background)
 
 # our maparray consists is the same size as our map display, one pixel for each "density" cell
 # we store color data so initialize 3 "zeros" wide
-maparray = np.zeros((constants.map_size, constants.map_size, 3))
+maparray = numpy.zeros((constants.map_size, constants.map_size, 3))
 for x in range(0, constants.map_size):
 
     #while the map data is being generated, stop every so often to add a progress marker to the screen
