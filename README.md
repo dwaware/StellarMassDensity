@@ -1,7 +1,7 @@
 # StellarMassDensity
 A visualization tool for stellar mass density.  By varying a few constants:
  
-galactic_seed = 0
+galaxy_seed = 0
 (0 forces a random seed)
 
 arm_scale = 25
