@@ -36,7 +36,7 @@ density_scale_factor_arms = 80
 
 density_scale_factor_core_outer = 5000
 
-density_scale_factor_core_inner = 10000
+density_scale_factor_core_inner = 25000
 
 physical_galaxy_size = 100000
 # in ly
